@@ -1,5 +1,7 @@
 package com.example.roulettegame.ui.game
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -23,8 +25,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -46,6 +50,14 @@ import com.example.roulettegame.ui.theme.fontFamily
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
+
+    val angle: Float by animateFloatAsState(
+        targetValue = viewModel.rotationValue,
+        animationSpec = tween(
+            durationMillis = 10000
+        ),
+        label = ""
+    )
 
     Box(Modifier.fillMaxSize()){
 
@@ -77,7 +89,8 @@ fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
                 Image(painter = painterResource(
                     id = R.drawable.roulette_1),
                     contentDescription = "Roulette",
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize().
+                    rotate(angle)
                 )
                 Image(painter = painterResource(
                     id = R.drawable.arrow),
@@ -122,7 +135,8 @@ fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
 
             RadioButtonGroup(viewModel)
 
-            Button(onClick = { /*TODO*/ },
+            Button(
+                onClick = { viewModel.onEvent(GameEvent.OnRollClick(angle)) },
                 modifier = Modifier
                     .padding(24.dp)
                     .fillMaxWidth()

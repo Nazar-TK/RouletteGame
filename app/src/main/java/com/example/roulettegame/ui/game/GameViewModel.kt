@@ -1,11 +1,14 @@
 package com.example.roulettegame.ui.game
 
+import android.util.Log
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.roulettegame.domain.GameRepository
 import com.example.roulettegame.presentation.utils.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -15,13 +18,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GameViewModel @Inject constructor(
-    //private val repository: GameRepository
+    private val repository: GameRepository
 ): ViewModel() {
 
     var stake by mutableStateOf("")
         private set
 
     var color by mutableStateOf("Red")
+        private set
+
+    var rotationValue by mutableStateOf(0f)
         private set
 
     private val _uiEvent = Channel<UIEvent>()
@@ -47,9 +53,12 @@ class GameViewModel @Inject constructor(
                         )
                         return@launch
                     }
-//                    repository.rollTheRoulette(
-//                        stake.toInt(), color
-//                    )
+                    rotationValue = (720..1440).random().toFloat() + event.angle
+                    val res = repository.rollTheRoulette(stake.toInt(), color, rotationValue)
+
+
+                    Log.d("HERE! rotationValue: ", rotationValue.toString())
+                    Log.d("HERE! result: ", res)
                 }
             }
         }

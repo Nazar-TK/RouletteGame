@@ -7,4 +7,6 @@ interface GameRepository {
     suspend fun insertStake()
 
     fun getStakes() : Flow<List<Stake>>
+
+    suspend fun rollTheRoulette(stake: Int, color: String, rotationValue: Float) : String
 }
