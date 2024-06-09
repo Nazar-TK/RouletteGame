@@ -70,6 +70,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     implementation("androidx.core:core-splashscreen:1.0.1")
+    //implementation("androidx.compose.material3:material3:1.3.0-beta02")
 
     // compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.1")

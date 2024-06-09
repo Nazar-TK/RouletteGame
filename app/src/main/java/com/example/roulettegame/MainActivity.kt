@@ -16,7 +16,9 @@ import com.example.roulettegame.presentation.utils.Routes
 import com.example.roulettegame.ui.game.GameScreen
 import com.example.roulettegame.ui.menu.MenuScreen
 import com.example.roulettegame.ui.theme.RouletteGameTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

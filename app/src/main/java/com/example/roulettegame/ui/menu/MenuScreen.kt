@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -31,13 +32,10 @@ import com.example.roulettegame.presentation.utils.Routes
 import com.example.roulettegame.ui.theme.Orange
 import com.example.roulettegame.ui.theme.Yellow
 import com.example.roulettegame.ui.theme.YellowLight
+import com.example.roulettegame.ui.theme.fontFamily
 
 @Composable
 fun MenuScreen(navController: NavController) {
-
-    val fontFamily = FontFamily(
-        Font(R.font.dmseriftext_regular, FontWeight.Medium)
-    )
 
     Box(Modifier.fillMaxSize()){
 
@@ -76,12 +74,11 @@ fun MenuScreen(navController: NavController) {
                 border = BorderStroke(5.dp, Yellow)
             ) {
                 Text(
-                    text = "PLAY",
+                    text = stringResource(id = R.string.play),
                     color = YellowLight,
                     fontSize = 40.sp,
                     fontFamily = fontFamily,
                     fontStyle = FontStyle.Normal,
-
                     )
             }
             Button(onClick = { /*TODO*/ },
@@ -100,12 +97,11 @@ fun MenuScreen(navController: NavController) {
                 border = BorderStroke(5.dp, Yellow)
             ) {
                 Text(
-                    text = "SHOP",
+                    text = stringResource(id = R.string.shop),
                     color = YellowLight,
                     fontSize = 40.sp,
                     fontFamily = fontFamily,
                     fontStyle = FontStyle.Normal,
-
                     )
             }
             Button(onClick = { /*TODO*/ },
@@ -124,12 +120,11 @@ fun MenuScreen(navController: NavController) {
                 border = BorderStroke(5.dp, Yellow)
             ) {
                 Text(
-                    text = "RESULTS",
+                    text = stringResource(id = R.string.results),
                     color = YellowLight,
                     fontSize = 40.sp,
                     fontFamily = fontFamily,
                     fontStyle = FontStyle.Normal,
-
                     )
             }
         }
