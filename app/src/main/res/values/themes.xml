@@ -4,7 +4,7 @@
     <style name="Theme.RouletteGame" parent="android:Theme.Material.Light.NoActionBar" />
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/green</item>
+        <item name="windowSplashScreenBackground">@color/red</item>
         <item name="postSplashScreenTheme">@style/Theme.RouletteGame</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/animated_logo</item>
     </style>
