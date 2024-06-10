@@ -13,7 +13,7 @@ interface RouletteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertStake(stake: StakeEntity)
 
-    @Query("SELECT * FROM stakeentity ORDER BY date DESC LIMIT 20")
+    @Query("SELECT * FROM stakeentity ORDER BY date DESC LIMIT 50")
     suspend fun getStakes() : List<StakeEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

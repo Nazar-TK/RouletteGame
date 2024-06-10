@@ -104,7 +104,7 @@ fun MenuScreen(navController: NavController) {
                     fontStyle = FontStyle.Normal,
                     )
             }
-            Button(onClick = { /*TODO*/ },
+            Button(onClick = { navController.navigate(Routes.RESULTS) },
                 modifier = Modifier
                     .padding(24.dp)
                     .fillMaxWidth()
