@@ -17,9 +17,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
@@ -28,11 +36,14 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -43,6 +54,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,6 +62,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.roulettegame.R
 import com.example.roulettegame.presentation.utils.UIEvent
 import com.example.roulettegame.ui.theme.Orange
+import com.example.roulettegame.ui.theme.Red
 import com.example.roulettegame.ui.theme.Yellow
 import com.example.roulettegame.ui.theme.YellowLight
 import com.example.roulettegame.ui.theme.fontFamily
@@ -58,7 +71,10 @@ import com.example.roulettegame.ui.theme.fontFamily
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
+fun GameScreen(
+    onPopBackStack: () -> Unit,
+    viewModel: GameViewModel = hiltViewModel()
+) {
 
     val angle: Float by animateFloatAsState(
         targetValue = viewModel.rotationValue,
@@ -68,11 +84,15 @@ fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
         label = ""
     )
 
+    val accountBalance by viewModel.accountBalanceState.collectAsState()
+    val showDialog by viewModel.showRechargeDialog
+
     val snackbarHostState = remember { SnackbarHostState() }
-    //val scope = rememberCoroutineScope()
+
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
             when (event) {
+                is UIEvent.PopBackStack -> onPopBackStack()
                 is UIEvent.ShowSnackBar -> {
                     snackbarHostState.showSnackbar(
                         message = event.message,
@@ -87,9 +107,51 @@ fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Box(Modifier.fillMaxSize()) {
+            .fillMaxSize(),
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = "Balance: $accountBalance",
+                    )
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Red,
+                    titleContentColor = Orange,
+                    navigationIconContentColor = Orange,
+                    actionIconContentColor = Orange
+                ),
+                navigationIcon = {
+                    IconButton(onClick = { viewModel.onEvent(GameEvent.OnGoBackClick) }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Go back")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { viewModel.onEvent(GameEvent.OnOpenRechargeBalanceDialogClick) }) {
+                        Icon(
+                            imageVector = Icons.Default.AddCircle,
+                            contentDescription = "Recharge the balance")
+                    }
+                    if (showDialog) {
+                        RechargeDialog(
+                            onDismiss = { viewModel.onEvent((GameEvent.OnDismissRechargeBalanceDialogClick)) },
+                            onRecharge = { amount ->
+                                viewModel.onEvent(GameEvent.OnRechargeBalanceClick(amount))
+                            }
+                        )
+                    }
+                }
+            )
+        }
+    ) { values ->
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(values)
+        ) {
 
             Image(
                 painter = painterResource(
@@ -105,13 +167,6 @@ fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
             ) {
-                Text(
-                    text = "Coins: ",
-                    color = Yellow,
-                    fontSize = 36.sp,
-                    fontFamily = fontFamily,
-                    fontStyle = FontStyle.Normal,
-                )
                 Box(
                     modifier = Modifier
                         .padding(16.dp)
@@ -123,7 +178,9 @@ fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
                             id = R.drawable.roulette_1
                         ),
                         contentDescription = "Roulette",
-                        modifier = Modifier.fillMaxSize().rotate(angle)
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .rotate(angle)
                     )
                     Image(
                         painter = painterResource(
@@ -194,6 +251,7 @@ fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
         }
     }
 }
+
 @Composable
 private fun RadioButtonGroup(viewModel: GameViewModel) {
 
@@ -220,4 +278,38 @@ private fun RadioButtonGroup(viewModel: GameViewModel) {
             Spacer(modifier = Modifier.width(10.dp))
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RechargeDialog(onDismiss: () -> Unit, onRecharge: (Int) -> Unit) {
+    var amountText by remember { mutableStateOf(TextFieldValue()) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Recharge Balance") },
+        text = {
+            OutlinedTextField(
+                value = amountText,
+                onValueChange = { amountText = it },
+                label = { Text("Amount") },
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+            )
+        },
+        confirmButton = {
+            Button(onClick = {
+                val amount = amountText.text.toIntOrNull()
+                if (amount != null) {
+                    onRecharge(amount)
+                }
+            }) {
+                Text("Recharge")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
 }

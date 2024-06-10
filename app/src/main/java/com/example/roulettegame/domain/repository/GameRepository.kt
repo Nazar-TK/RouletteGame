@@ -6,9 +6,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface GameRepository {
 
-    fun insertStake(stake: Stake): Flow<Resource<Pair<Boolean, Boolean>>>
+    fun insertStake(stake: Stake): Flow<Resource<Pair<Boolean, Stake>>>
 
     fun getStakes() : Flow<Resource<List<Stake>>>
 
-    fun rollTheRoulette(stake: Int, color: String, rotationValue: Float) : Flow<Resource<Pair<Boolean, Boolean>>>
+    fun rollTheRoulette(stake: Int, color: String, rotationValue: Float) : Flow<Resource<Pair<Boolean, Stake>>>
 }

@@ -35,7 +35,9 @@ class MainActivity : ComponentActivity() {
                         MenuScreen(navController = navController)
                     }
                    composable(Routes.GAME) {
-                        GameScreen()
+                        GameScreen(onPopBackStack = {
+                            navController.popBackStack()
+                        })
                     }
                 }
             }

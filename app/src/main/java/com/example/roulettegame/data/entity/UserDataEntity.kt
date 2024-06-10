@@ -6,15 +6,13 @@ import com.example.roulettegame.domain.model.UserData
 
 @Entity
 data class UserDataEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey
+    val id: Int = 1,
     val coins: Int,
-    val roulette: Int
 ){
     fun toUserData() : UserData {
         return UserData(
-            coins = coins,
-            roulette = roulette
+            coins = coins
         )
     }
 }

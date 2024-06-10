@@ -10,11 +10,11 @@ import kotlinx.coroutines.flow.flow
 import java.time.LocalDateTime
 
 class GameRepositoryImpl(private val dao: RouletteDao): GameRepository {
-    override fun insertStake(stake: Stake): Flow<Resource<Pair<Boolean, Boolean>>> = flow {
+    override fun insertStake(stake: Stake): Flow<Resource<Pair<Boolean, Stake>>> = flow {
         try {
             dao.insertStake(stake.toStakeEntity())
             // emits success of the insertion and result of the stake
-            emit(Resource.Success(Pair(true, stake.isAWinningBet)))
+            emit(Resource.Success(Pair(true, stake)))
         } catch (e: Exception) {
             emit(Resource.Error(message = "Could not insert stake data to database."))
         }
@@ -33,7 +33,7 @@ class GameRepositoryImpl(private val dao: RouletteDao): GameRepository {
         stake: Int,
         color: String,
         rotationValue: Float,
-    ) : Flow<Resource<Pair<Boolean, Boolean>>>  {
+    ) : Flow<Resource<Pair<Boolean, Stake>>> {
 
         val angle = rotationValue % 360f
         val sectorAngleRange = 360.0 / 37.0f
@@ -59,9 +59,9 @@ class GameRepositoryImpl(private val dao: RouletteDao): GameRepository {
         var winningAmount: Int? = null
         if( isAWinningBet ) {
             winningAmount = if( color == "Green" )
-                stake * 36
+                stake * 35
             else
-                stake * 2
+                stake
         }
 
         return Stake(
