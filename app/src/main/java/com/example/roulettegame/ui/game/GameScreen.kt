@@ -1,5 +1,6 @@
 package com.example.roulettegame.ui.game
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -21,11 +22,17 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -41,12 +48,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.roulettegame.R
+import com.example.roulettegame.presentation.utils.UIEvent
 import com.example.roulettegame.ui.theme.Orange
 import com.example.roulettegame.ui.theme.Yellow
 import com.example.roulettegame.ui.theme.YellowLight
 import com.example.roulettegame.ui.theme.fontFamily
 
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
@@ -59,105 +68,132 @@ fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
         label = ""
     )
 
-    Box(Modifier.fillMaxSize()){
-
-        Image(painter = painterResource(
-            id = R.drawable.app_background),
-            contentDescription = "app background",
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier.matchParentSize()
-        )
-
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ) {
-            Text(
-                text = "Coins: ",
-                color = Yellow,
-                fontSize = 36.sp,
-                fontFamily = fontFamily,
-                fontStyle = FontStyle.Normal,
-            )
-            Box(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .weight(1f)
-                    .fillMaxWidth()
-            ) {
-                Image(painter = painterResource(
-                    id = R.drawable.roulette_1),
-                    contentDescription = "Roulette",
-                    modifier = Modifier.fillMaxSize().
-                    rotate(angle)
-                )
-                Image(painter = painterResource(
-                    id = R.drawable.arrow),
-                    contentDescription = "Arrow",
-                    modifier = Modifier.fillMaxSize()
-                )
+    val snackbarHostState = remember { SnackbarHostState() }
+    //val scope = rememberCoroutineScope()
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is UIEvent.ShowSnackBar -> {
+                    snackbarHostState.showSnackbar(
+                        message = event.message,
+                        actionLabel = event.action
+                    )
+                }
+                else -> Unit
             }
+        }
+    }
 
-            Text(
-                text = stringResource(id = R.string.stake),
-                color = Yellow,
-                fontSize = 42.sp,
-                fontFamily = fontFamily,
-                fontStyle = FontStyle.Normal,
-                )
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Box(Modifier.fillMaxSize()) {
 
-            Spacer(modifier = Modifier.height(12.dp))
-
-            TextField(
-                value = viewModel.stake,
-                onValueChange = {
-                    viewModel.onEvent(GameEvent.OnStakeChange(it))
-                },
-                textStyle = TextStyle.Default.copy(
-                    fontSize = 30.sp,
-                    textAlign = TextAlign.Center),
-                placeholder = {
-                    Text(text = stringResource(id = R.string.your_stake))
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = YellowLight,
-                    textColor = Orange,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = Orange,
-                    placeholderColor = Orange
-
+            Image(
+                painter = painterResource(
+                    id = R.drawable.app_background
                 ),
-                shape = RoundedCornerShape(18.dp),
+                contentDescription = "app background",
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier.matchParentSize()
             )
 
-            RadioButtonGroup(viewModel)
-
-            Button(
-                onClick = { viewModel.onEvent(GameEvent.OnRollClick(angle)) },
-                modifier = Modifier
-                    .padding(24.dp)
-                    .fillMaxWidth()
-                    .height(80.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Orange
-                ),
-                border = BorderStroke(5.dp, Yellow)
-            ){
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
+            ) {
                 Text(
-                    text = stringResource(id = R.string.roll),
-                    color = YellowLight,
-                    fontSize = 40.sp,
+                    text = "Coins: ",
+                    color = Yellow,
+                    fontSize = 36.sp,
                     fontFamily = fontFamily,
                     fontStyle = FontStyle.Normal,
                 )
+                Box(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) {
+                    Image(
+                        painter = painterResource(
+                            id = R.drawable.roulette_1
+                        ),
+                        contentDescription = "Roulette",
+                        modifier = Modifier.fillMaxSize().rotate(angle)
+                    )
+                    Image(
+                        painter = painterResource(
+                            id = R.drawable.arrow
+                        ),
+                        contentDescription = "Arrow",
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+
+                Text(
+                    text = stringResource(id = R.string.stake),
+                    color = Yellow,
+                    fontSize = 42.sp,
+                    fontFamily = fontFamily,
+                    fontStyle = FontStyle.Normal,
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                TextField(
+                    value = viewModel.stake,
+                    onValueChange = {
+                        viewModel.onEvent(GameEvent.OnStakeChange(it))
+                    },
+                    textStyle = TextStyle.Default.copy(
+                        fontSize = 30.sp,
+                        textAlign = TextAlign.Center
+                    ),
+                    placeholder = {
+                        Text(text = stringResource(id = R.string.your_stake))
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = YellowLight,
+                        textColor = Orange,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        cursorColor = Orange,
+                        placeholderColor = Orange
+
+                    ),
+                    shape = RoundedCornerShape(18.dp),
+                )
+
+                RadioButtonGroup(viewModel)
+
+                Button(
+                    onClick = { viewModel.onEvent(GameEvent.OnRollClick(angle)) },
+                    modifier = Modifier
+                        .padding(24.dp)
+                        .fillMaxWidth()
+                        .height(80.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Orange
+                    ),
+                    border = BorderStroke(5.dp, Yellow)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.roll),
+                        color = YellowLight,
+                        fontSize = 40.sp,
+                        fontFamily = fontFamily,
+                        fontStyle = FontStyle.Normal,
+                    )
+                }
             }
         }
     }
 }
-
 @Composable
 private fun RadioButtonGroup(viewModel: GameViewModel) {
 

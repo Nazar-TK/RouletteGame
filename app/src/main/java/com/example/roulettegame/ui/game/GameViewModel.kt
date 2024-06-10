@@ -1,17 +1,20 @@
 package com.example.roulettegame.ui.game
 
 import android.util.Log
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.roulettegame.domain.GameRepository
+import com.example.roulettegame.core.utils.Resource
+import com.example.roulettegame.domain.repository.GameRepository
 import com.example.roulettegame.presentation.utils.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,6 +24,8 @@ class GameViewModel @Inject constructor(
     private val repository: GameRepository
 ): ViewModel() {
 
+    private val TAG = "GameViewModel"
+
     var stake by mutableStateOf("")
         private set
 
@@ -29,6 +34,9 @@ class GameViewModel @Inject constructor(
 
     var rotationValue by mutableStateOf(0f)
         private set
+
+    private val _accountBalanceState = MutableStateFlow("0.0")
+    val accountBalanceState: StateFlow<String> = _accountBalanceState
 
     private val _uiEvent = Channel<UIEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -54,11 +62,31 @@ class GameViewModel @Inject constructor(
                         return@launch
                     }
                     rotationValue = (720..1440).random().toFloat() + event.angle
-                    val res = repository.rollTheRoulette(stake.toInt(), color, rotationValue)
+                    repository.rollTheRoulette(stake.toInt(), color, rotationValue).onEach { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                if( result.data!!.second) {
+                                    sendUiEvent(
+                                        UIEvent.ShowSnackBar(
+                                            message = "Congratulations, you won!"
+                                        )
+                                    )
+                                } else {
+                                    sendUiEvent(
+                                        UIEvent.ShowSnackBar(
+                                            message = "Better luck next time"
+                                        )
+                                    )
+                                }
 
-
-                    Log.d("HERE! rotationValue: ", rotationValue.toString())
-                    Log.d("HERE! result: ", res)
+                                Log.d(TAG, "rollTheRoulette(): user won = ${result.data?.second.toString()}")
+                            }
+                            is Resource.Error -> {
+                                Log.d(TAG, result.message.toString())
+                            }
+                        }
+                    }
+                        .launchIn(viewModelScope)
                 }
             }
         }
