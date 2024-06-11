@@ -65,7 +65,8 @@ class GameViewModel @Inject constructor(
     fun onEvent(event: GameEvent) {
         when (event) {
             is GameEvent.OnStakeChange -> {
-                stake = event.stake
+                val filteredValue = event.stake.filter { it.isDigit() }
+                stake = filteredValue
             }
 
             is GameEvent.OnColorSelectionChange -> {

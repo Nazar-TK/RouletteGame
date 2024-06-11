@@ -13,7 +13,6 @@ class GameRepositoryImpl(private val dao: RouletteDao): GameRepository {
     override fun insertStake(stake: Stake): Flow<Resource<Pair<Boolean, Stake>>> = flow {
         try {
             dao.insertStake(stake.toStakeEntity())
-            // emits success of the insertion and result of the stake
             emit(Resource.Success(Pair(true, stake)))
         } catch (e: Exception) {
             emit(Resource.Error(message = "Could not insert stake data to database."))
@@ -46,7 +45,6 @@ class GameRepositoryImpl(private val dao: RouletteDao): GameRepository {
         } else {
             "Red"
         }
-        Log.d("HERE! currentSector: ", currentSector.toString())
         val stakeData = processTheData(stake, color, sectorColor)
 
         return insertStake(stakeData)

@@ -25,7 +25,10 @@ fun RechargeDialog(onDismiss: () -> Unit, onRecharge: (Int) -> Unit) {
         text = {
             OutlinedTextField(
                 value = amountText,
-                onValueChange = { amountText = it },
+                onValueChange = { amount ->
+                    val filteredValue = amount.copy(text = amount.text.filter { it.isDigit() })
+                    amountText = filteredValue
+                },
                 label = { Text("Amount") },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
             )
