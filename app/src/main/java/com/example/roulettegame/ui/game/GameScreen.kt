@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.roulettegame.R
 import com.example.roulettegame.presentation.utils.UIEvent
+import com.example.roulettegame.ui.commoncomposables.RechargeDialog
 import com.example.roulettegame.ui.theme.Orange
 import com.example.roulettegame.ui.theme.Red
 import com.example.roulettegame.ui.theme.Yellow
@@ -278,38 +279,4 @@ private fun RadioButtonGroup(viewModel: GameViewModel) {
             Spacer(modifier = Modifier.width(10.dp))
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun RechargeDialog(onDismiss: () -> Unit, onRecharge: (Int) -> Unit) {
-    var amountText by remember { mutableStateOf(TextFieldValue()) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Recharge Balance") },
-        text = {
-            OutlinedTextField(
-                value = amountText,
-                onValueChange = { amountText = it },
-                label = { Text("Amount") },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-            )
-        },
-        confirmButton = {
-            Button(onClick = {
-                val amount = amountText.text.toIntOrNull()
-                if (amount != null) {
-                    onRecharge(amount)
-                }
-            }) {
-                Text("Recharge")
-            }
-        },
-        dismissButton = {
-            Button(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
 }

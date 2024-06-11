@@ -24,7 +24,7 @@ class ResultsViewModel @Inject constructor(
     init {
         getStakes()
     }
-    fun getStakes() {
+    private fun getStakes() {
 
         gameRepository.getStakes().onEach { result ->
             when (result) {

@@ -16,6 +16,7 @@ import com.example.roulettegame.presentation.utils.Routes
 import com.example.roulettegame.ui.game.GameScreen
 import com.example.roulettegame.ui.menu.MenuScreen
 import com.example.roulettegame.ui.results.ResultsScreen
+import com.example.roulettegame.ui.shop.ShopScreen
 import com.example.roulettegame.ui.theme.RouletteGameTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -42,6 +43,11 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(Routes.RESULTS) {
                         ResultsScreen(onPopBackStack = {
+                            navController.popBackStack()
+                        })
+                    }
+                    composable(Routes.STORE) {
+                        ShopScreen(onPopBackStack = {
                             navController.popBackStack()
                         })
                     }

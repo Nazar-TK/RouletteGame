@@ -56,11 +56,11 @@ fun MenuScreen(navController: NavController) {
                 id = R.drawable.casino_menu_image),
                 contentDescription = "menu image",
                 contentScale = ContentScale.Fit,
-                modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp).height(400.dp).width(400.dp)
+                modifier = Modifier.padding(start = 24.dp, end = 24.dp).height(400.dp).width(400.dp)
             )
             Button(onClick = { navController.navigate(Routes.GAME) },
                 modifier = Modifier
-                    .padding(24.dp)
+                    .padding(vertical = 12.dp, horizontal = 24.dp)
                     .fillMaxWidth()
                     .height(80.dp),
                 shape = CutCornerShape(20.dp),
@@ -81,9 +81,9 @@ fun MenuScreen(navController: NavController) {
                     fontStyle = FontStyle.Normal,
                     )
             }
-            Button(onClick = { /*TODO*/ },
+            Button(onClick = { navController.navigate(Routes.STORE) },
                 modifier = Modifier
-                    .padding(24.dp)
+                    .padding(vertical = 12.dp, horizontal = 24.dp)
                     .fillMaxWidth()
                     .height(80.dp),
                 shape = CutCornerShape(20.dp),
@@ -106,7 +106,7 @@ fun MenuScreen(navController: NavController) {
             }
             Button(onClick = { navController.navigate(Routes.RESULTS) },
                 modifier = Modifier
-                    .padding(24.dp)
+                    .padding(vertical = 12.dp, horizontal = 24.dp)
                     .fillMaxWidth()
                     .height(80.dp),
                 shape = CutCornerShape(20.dp),

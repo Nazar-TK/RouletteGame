@@ -37,13 +37,8 @@ import com.example.roulettegame.domain.model.Stake
 import com.example.roulettegame.presentation.utils.UIEvent
 import com.example.roulettegame.ui.game.GameEvent
 import com.example.roulettegame.ui.game.GameViewModel
-import com.example.roulettegame.ui.game.RechargeDialog
 import com.example.roulettegame.ui.theme.Orange
 import com.example.roulettegame.ui.theme.Red
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResultsScreen(
