@@ -13,16 +13,20 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.core.view.WindowCompat
+import com.example.roulettegame.R
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
+    primary = Red,
     secondary = PurpleGrey80,
     tertiary = Pink80
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
+    primary = Red,
     secondary = PurpleGrey40,
     tertiary = Pink40
 
@@ -37,6 +41,9 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+val fontFamily = FontFamily(
+    Font(R.font.dmseriftext_regular, FontWeight.Medium)
+)
 @Composable
 fun RouletteGameTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -57,7 +64,7 @@ fun RouletteGameTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            window.statusBarColor = Red.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }

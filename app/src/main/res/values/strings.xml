@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">RouletteGame</string>
+    <string name="play">PLAY</string>
+    <string name="shop">SHOP</string>
+    <string name="results">RESULTS</string>
+    <string name="stake">STAKE</string>
+    <string name="your_stake">Your stake</string>
+    <string name="roll">Roll</string>
 </resources>

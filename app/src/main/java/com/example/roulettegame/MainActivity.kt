@@ -3,44 +3,56 @@ package com.example.roulettegame
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.roulettegame.presentation.utils.Routes
+import com.example.roulettegame.ui.game.GameScreen
+import com.example.roulettegame.ui.menu.MenuScreen
+import com.example.roulettegame.ui.results.ResultsScreen
+import com.example.roulettegame.ui.shop.ShopScreen
 import com.example.roulettegame.ui.theme.RouletteGameTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
+        installSplashScreen()
+
+         setContent {
             RouletteGameTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                val navController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = Routes.MENU
                 ) {
-                    Greeting("Android")
+                    composable(Routes.MENU) {
+                        MenuScreen(navController = navController)
+                    }
+                   composable(Routes.GAME) {
+                        GameScreen(onPopBackStack = {
+                            navController.popBackStack()
+                        })
+                    }
+                    composable(Routes.RESULTS) {
+                        ResultsScreen(onPopBackStack = {
+                            navController.popBackStack()
+                        })
+                    }
+                    composable(Routes.STORE) {
+                        ShopScreen(onPopBackStack = {
+                            navController.popBackStack()
+                        })
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    RouletteGameTheme {
-        Greeting("Android")
     }
 }
